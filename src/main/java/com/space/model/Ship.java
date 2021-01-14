@@ -36,7 +36,6 @@ public class Ship {
     @Column(name = "shipType")
     private ShipType shipType;
 
-    @DateTimeFormat
     @Column(name = "prodDate")
     private Date prodDate;
 
