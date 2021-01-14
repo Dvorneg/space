@@ -27,7 +27,7 @@ public class ShipServiceImpl implements ShipService {
 
     @Override
     public List<Ship> getAllShips() {
-        return (List<Ship>) shipRepository.findAll();
+        return shipRepository.findAll();
     }
 
     @Override
@@ -53,8 +53,8 @@ public class ShipServiceImpl implements ShipService {
             if (name != null && !ship.getName().contains(name)) return;
             if (planet != null && !ship.getPlanet().contains(planet)) return;
             if (shipType != null && ship.getShipType() != shipType) return;
-            if (aDate != null && getYear(ship.getProdDate()) < getYear(aDate)) return;
-            if (bDate != null && getYear(ship.getProdDate()) > getYear(bDate)) return;
+            if (aDate != null && ship.getProdDate().before(aDate)) return;
+            if (bDate != null && ship.getProdDate().after(bDate)) return;
             if (isUsed != null && ship.getUsed().booleanValue() != isUsed.booleanValue()) return;
             if (minSpeed != null && ship.getSpeed().compareTo(minSpeed) < 0) return;
             if (maxSpeed != null && ship.getSpeed().compareTo(maxSpeed) > 0) return;
@@ -210,20 +210,19 @@ public class ShipServiceImpl implements ShipService {
     }
 
     public double calculateRating(double speed, boolean isUsed, Date prod) {
-        final int now = 3019;
-        final int prodYear = getYear(prod);
-        final double k = isUsed ? 0.5 : 1;
-        final double rating = 80 * speed * k / (now - prodYear + 1);
+        int now = 3019;
+        int prodYear = getYear(prod);
+        double k = isUsed ? 0.5 : 1;
+        double rating = 80 * speed * k / (now - prodYear + 1);
         return round(rating);
     }
 
     public static int getYear(Date date) {
-        int year = Integer.parseInt(new SimpleDateFormat("yyyy").format(date));
-        return year;
+        return Integer.parseInt(new SimpleDateFormat("yyyy").format(date));
     }
 
     private Date getDateForYear(int year) {
-        final Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, year);
         return calendar.getTime();
     }
